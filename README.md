@@ -25,10 +25,9 @@ Let's take a look at YOLOV7 as a whole. First, resize the input image to a size 
 There are 50 layers in total, and I marked the key layers with black numbers in the picture above.
 The first is to go through 4 layers of convolution layers, as shown in the figure below, CBS is mainly composed of Conv + BN + SiLU , I use different colors to represent different sizes and strides in the figure, such as (3, 2) means that the size of the convolution kernel is 3 , with a step size of 2. The configuration in config is shown in the figure.
 
-
 <img width="413" alt="image" src="https://user-images.githubusercontent.com/62583018/195329013-dd48c3f5-832a-49d5-a4e1-1e49a1ac0b0a.png">
 
-
+After 4 CBS, the feature map becomes 160*160*128 size. Afterwards, the ELAN module proposed in the paper will go through. The ELAN is composed of multiple CBSs, and the input and output feature sizes remain unchanged. The number of channels will change in the first two CBSs, and the following input channels are kept with the output channels. Consistently, after the last CBS output is the desired channel.
 
 # ELAN1 Block
 
@@ -37,7 +36,7 @@ The first is to go through 4 layers of convolution layers, as shown in the figur
 <img width="581" alt="image" src="https://user-images.githubusercontent.com/62583018/195321418-96cbb17f-b93e-4b70-8807-7c0a58af2378.png">
 
 
-After 4 CBS, the feature map becomes 160*160*128 size. Afterwards, the ELAN module proposed in the paper will go through. The ELAN is composed of multiple CBSs, and the input and output feature sizes remain unchanged. The number of channels will change in the first two CBSs, and the following input channels are kept with the output channels. Consistently, after the last CBS output is the desired channel.
+
 
 <img width="367" alt="image" src="https://user-images.githubusercontent.com/62583018/195331166-8f319451-3c2c-4676-a825-39011426f8b2.png">
 
