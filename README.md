@@ -12,9 +12,22 @@ Architect of yolov7
 <img width="638" alt="image" src="https://user-images.githubusercontent.com/62583018/195313857-9f2b2c73-ad0d-44c3-a278-51d6ee4d6a64.png">
 
 
+Let's take a look at YOLOV7 as a whole. First, resize the input image to a size of 640x640, input it into the backbone network, and then output three layers of feature maps of different sizes through the head layer network, and output the prediction result through Rep and conv. Here, coco As an example, the output is 80 categories, and then each output (x, y, w, h, o) is the coordinate position and the background before and after, 3 refers to the number of anchors, so the output of each layer is (80+5) x3 = 255 multiplied by the size of the feature map is the final output
+
+
 ## Backbone
 
 <img width="692" alt="image" src="https://user-images.githubusercontent.com/62583018/195325569-8ee8b946-dc12-47d2-a80d-e66674581d1e.png">
+
+
+
+
+There are 50 layers in total, and I marked the key layers with black numbers in the picture above.
+The first is to go through 4 layers of convolution layers, as shown in the figure below, CBS is mainly composed of Conv + BN + SiLU , I use different colors to represent different sizes and strides in the figure, such as (3, 2) means that the size of the convolution kernel is 3 , with a step size of 2. The configuration in config is shown in the figure.
+
+
+<img width="413" alt="image" src="https://user-images.githubusercontent.com/62583018/195329013-dd48c3f5-832a-49d5-a4e1-1e49a1ac0b0a.png">
+
 
 
 # ELAN1 Block
@@ -23,6 +36,40 @@ Architect of yolov7
 
 <img width="581" alt="image" src="https://user-images.githubusercontent.com/62583018/195321418-96cbb17f-b93e-4b70-8807-7c0a58af2378.png">
 
+
+After 4 CBS, the feature map becomes 160*160*128 size. Afterwards, the ELAN module proposed in the paper will go through. The ELAN is composed of multiple CBSs, and the input and output feature sizes remain unchanged. The number of channels will change in the first two CBSs, and the following input channels are kept with the output channels. Consistently, after the last CBS output is the desired channel.
+
+<img width="367" alt="image" src="https://user-images.githubusercontent.com/62583018/195331166-8f319451-3c2c-4676-a825-39011426f8b2.png">
+
+<img width="332" alt="image" src="https://user-images.githubusercontent.com/62583018/195331246-d30c26a8-e56f-429e-a56b-cb2ac20e6e47.png">
+
+## the mp layer
+
+<img width="369" alt="image" src="https://user-images.githubusercontent.com/62583018/195331374-55397688-8a2a-4141-96dd-cdaa12432cd2.png">
+
+
+## head 
+
+<img width="378" alt="image" src="https://user-images.githubusercontent.com/62583018/195331496-597fcca5-e93d-4199-a75c-f7254079a0f5.png">
+
+The YOLOV7 head is actually a pafpn structure, the same as the previous YOLOV4 and YOLOV5. First, for the 32-fold down-sampled feature map C5 finally output by the backbone, and then through SPPCSP, the number of channels is changed from 1024 to 512. First, fuse with C4 and C3 according to top down to get P3, P4 and P5; then press bottom-up to fuse with P4 and P5
+
+
+<img width="314" alt="image" src="https://user-images.githubusercontent.com/62583018/195331688-512fa518-f070-4b96-9fa3-0a805c98f0bd.png">
+
+<img width="239" alt="image" src="https://user-images.githubusercontent.com/62583018/195331773-60b02853-e2d4-4805-86cf-e9177ec10a88.png">
+
+
+It is basically the same as YOLOV5 here , the difference is that the CSP module in YOLOV5 is replaced by the ELAN-H module, and the downsampling is changed to the MP2 layer. The ELAN-H module is named by myself, and it is slightly different from the ELAN in the backbone that the number of cats is different.
+
+<img width="439" alt="image" src="https://user-images.githubusercontent.com/62583018/195332160-412dd0e6-21d5-452c-8927-e8f38cba4918.png">
+
+<img width="432" alt="image" src="https://user-images.githubusercontent.com/62583018/195332219-48f5b27a-c4d2-4f4c-bc08-e7295136bf95.png">
+
+
+
+
+### CFg 
 
 # Elan2 
 
